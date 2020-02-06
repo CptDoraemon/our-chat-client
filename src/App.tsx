@@ -5,8 +5,16 @@ import firebase from 'firebase';
 import Login from "./components/login/login";
 import OurChat from "./components/our-chat/our-chat";
 import theme from "./theme";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
-interface IUser {
+const useStyle = makeStyles({
+    root: {
+        width: '100vw',
+        maxWidth: '100%',
+    }
+});
+
+export interface IUser {
     displayName: string | null,
     email: string | null,
     emailVerified: boolean,
@@ -17,6 +25,8 @@ interface IUser {
 }
 
 const App = () => {
+
+    const classes = useStyle();
 
     const [user, setUser] = useState<null | IUser>(null);
 
@@ -42,7 +52,9 @@ const App = () => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            { user ? <OurChat/> : <Login/> }
+            <div className={classes.root}>
+                { user ? <OurChat user={user}/> : <Login/> }
+            </div>
         </ThemeProvider>
     );
 };
