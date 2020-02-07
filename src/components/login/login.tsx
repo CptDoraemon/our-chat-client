@@ -19,7 +19,7 @@ const uiConfig = {
     // Popup signin flow rather than redirect flow.
     signInFlow: 'redirect',
     // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
-    signInSuccessUrl: '/',
+    signInSuccessUrl: '/chat',
     // We will display Google and Facebook as auth providers.
     signInOptions: [
         firebase.auth.EmailAuthProvider.PROVIDER_ID,

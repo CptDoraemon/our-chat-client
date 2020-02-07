@@ -1,9 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import grey from '@material-ui/core/colors/grey';
 import SideBar from "../side-bar/side-bar";
 import {IUser} from "../../App";
+import Chat from "../chat/chat";
+import Contacts from "../contacts/contacts";
+
+export enum Tabs {
+    CHAT = 'CHAT',
+    CONTACTS = 'CONTACTS'
+}
 
 const useStyle = makeStyles({
     root: {
@@ -18,15 +25,9 @@ const useStyle = makeStyles({
         width: '80px',
         height: '100%',
     },
-    left: {
-        width: '400px',
+    main: {
+        width: 'calc(100% - 80px)',
         height: '100%',
-        backgroundColor: grey[300]
-    },
-    right: {
-        width: 'calc(100% - 250px)',
-        height: '100%',
-        backgroundColor: 'white'
     }
 });
 
@@ -36,13 +37,19 @@ interface OurChatProps {
 
 const OurChat: React.FC<OurChatProps> = ({user}) => {
     const classes = useStyle();
+    const [tab, setTab] = useState<Tabs>(Tabs.CHAT);
     return (
         <div className={classes.root}>
             <div className={classes.sideBar}>
-                <SideBar user={user}/>
+                <SideBar user={user} tab={tab} setTab={setTab}/>
             </div>
-            <div className={classes.left}> </div>
-            <div className={classes.right}> </div>
+            <div className={classes.main}>
+                {
+                    tab === Tabs.CHAT ?
+                        <Chat/> :
+                        <Contacts/>
+                }
+            </div>
         </div>
     )
 };

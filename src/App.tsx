@@ -11,6 +11,10 @@ const useStyle = makeStyles({
     root: {
         width: '100vw',
         maxWidth: '100%',
+        "& a": {
+            color: 'inherit',
+            textDecoration: 'inherit'
+        }
     }
 });
 
@@ -47,7 +51,7 @@ const App = () => {
                 setUser(null)
             }
         });
-    });
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
