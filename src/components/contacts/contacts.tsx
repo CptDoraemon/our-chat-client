@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ContactsList from "./contacts-list";
+import ContactsAddNewFriend from "./contacts-add-new-friend";
+import {ContactsDetailFriend} from "./contacts-detail";
 
 const mockData = new Array(50);
 mockData.fill(    {
@@ -12,9 +14,14 @@ mockData.unshift({
     image: 'https://lh3.googleusercontent.com/a-/AAuE7mC3eMfsUaN4ngbp2Zg2t9CjVeWgRAos_E54qcxQSQ',
 });
 
-enum ContactsPage {
+enum ContactsPageOne {
     NEW_FRIEND='NEW_FRIEND',
-    CONTACT_DETAIL='CONTACT_DETAIL'
+    CONTACTS='CONTACTS'
+}
+
+enum ContactsPageTwo {
+    CONTACT_DETAIL='CONTACT_DETAIL',
+    ADD_NEW_FRIEND='ADD_NEW_FRIEND'
 }
 
 const useStyles = makeStyles({
@@ -47,19 +54,32 @@ const Contacts: React.FC = () => {
     });
 
     const [selectedContact, setSelectedContact] = useState(-1);
-    const [page, setPage] = useState(ContactsPage.CONTACT_DETAIL);
+    const [pageOne, setPageOne] = useState(ContactsPageOne.CONTACTS);
+    const [pageTwo, setPageTwo] = useState(ContactsPageTwo.CONTACT_DETAIL);
 
     const toggleContact = (value: number) => {
         setSelectedContact(value)
     };
 
+    const setPageOneNewFriend = () => {
+        if (pageOne !== ContactsPageOne.NEW_FRIEND) setPageOne(ContactsPageOne.NEW_FRIEND)
+    };
+
+    const setPageOneContacts = () => {
+        if (pageOne !== ContactsPageOne.CONTACTS) setPageOne(ContactsPageOne.CONTACTS)
+    };
+
     return (
         <div className={classes.root}>
             <div className={`${classes.list} ${classes.border}`}>
-                <ContactsList data={sortedData} selectedContact={selectedContact} toggleContact={toggleContact}/>
+                {
+                    pageOne === ContactsPageOne.CONTACTS ?
+                        <ContactsList data={sortedData} selectedContact={selectedContact} toggleContact={toggleContact} addNewFriend={setPageOneNewFriend}/> :
+                        <ContactsAddNewFriend backToContacts={setPageOneContacts}/>
+                }
             </div>
-            <div className={classes.right}>
-                123
+            <div className={classes.right + ' row-c-c'}>
+                <ContactsDetailFriend name={'mock name'} image={'https://lh3.googleusercontent.com/a-/AAuE7mC3eMfsUaN4ngbp2Zg2t9CjVeWgRAos_E54qcxQSQ'}/>
             </div>
         </div>
     )

@@ -2,7 +2,7 @@ import React from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ContactsListItem, {ContactsListItemData} from "./contacts-list-item";
 import ContactsListItemDividerAlphabetic from "./contacts-list-item-divider-alphabetic";
-import ContactsListItemNewFriend from "./contacts-list-item-new-friend";
+import ContactsListItemGeneric from "./contacts-list-item-generic";
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 
 function assembleData(data: ContactsListItemData[], selectedContact: number, toggleContact: (value: number) => void) {
@@ -38,18 +38,19 @@ const useStyles = makeStyles({
 interface ContactsListProps {
     data: ContactsListItemData[],
     selectedContact: number,
-    toggleContact: (value: number) => void
+    toggleContact: (value: number) => void,
+    addNewFriend: () => void
 }
 
-const ContactsList: React.FC<ContactsListProps> = ({data, selectedContact, toggleContact }) => {
+const ContactsList: React.FC<ContactsListProps> = ({data, selectedContact, toggleContact, addNewFriend }) => {
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
             <div className={classes.wrapper}>
-                <ContactsListItemNewFriend title={'New Friend'} color={'white'} backgroundColor={'orange'}>
+                <ContactsListItemGeneric title={'New Friend'} color={'white'} backgroundColor={'orange'} onClick={addNewFriend}>
                     <RecentActorsIcon/>
-                </ContactsListItemNewFriend>
+                </ContactsListItemGeneric>
             {
                 assembleData(data, selectedContact, toggleContact)
             }

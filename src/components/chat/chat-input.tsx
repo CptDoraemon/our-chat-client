@@ -35,6 +35,7 @@ const useStyle = makeStyles({
         fontSize: 'inherit',
         backgroundColor: 'inherit',
         padding: '0 16px',
+        margin: 0
     }
 });
 

@@ -4,7 +4,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 const useStyles = makeStyles({
     root: {
         width: '100%',
-        height: '50px',
+        height: '1.5rem',
     },
 });
 
@@ -16,7 +16,7 @@ const ContactsListItemDividerAlphabetic: React.FC<ContactsListItemDividerAlphabe
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
+        <div className={classes.root + ' row-c-c'}>
             { title }
         </div>
     )

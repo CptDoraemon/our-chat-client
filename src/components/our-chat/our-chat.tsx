@@ -19,7 +19,7 @@ const useStyle = makeStyles({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     sideBar: {
         width: '80px',
@@ -28,6 +28,7 @@ const useStyle = makeStyles({
     main: {
         width: 'calc(100% - 80px)',
         height: '100%',
+        backgroundColor: 'white'
     }
 });
 

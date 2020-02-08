@@ -36,15 +36,16 @@ const useStyles = makeStyles({
 interface ContactsListItemNewFriendProps {
     title: string,
     color: string,
-    backgroundColor: string
+    backgroundColor: string,
+    onClick: () => void
 }
 
-const ContactsListItemNewFriend: React.FC<ContactsListItemNewFriendProps> = (props) => {
+const ContactsListItemGeneric: React.FC<ContactsListItemNewFriendProps> = (props) => {
     const classes = useStyles();
 
     return (
         <Card className={classes.root} elevation={0}>
-            <CardActionArea className={classes.actionArea}>
+            <CardActionArea className={classes.actionArea} onClick={props.onClick}>
                 <div className={classes.icon + ' row-c-c'} style={{color: props.color, backgroundColor: props.backgroundColor}}>
                     { props.children }
                 </div>
@@ -56,4 +57,4 @@ const ContactsListItemNewFriend: React.FC<ContactsListItemNewFriendProps> = (pro
     )
 };
 
-export default ContactsListItemNewFriend
+export default ContactsListItemGeneric
