@@ -28,7 +28,8 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: 'rgb(220, 220, 220)'
     },
     list: {
         width: '400px',
@@ -63,7 +64,7 @@ const Chat: React.FC = () => {
     return (
         <div className={classes.root}>
             <div className={`${classes.list} ${classes.border}`}>
-                <ChatList data={mockData} setActiveChat={setActiveChat}/>
+                <ChatList data={mockData} setActiveChat={setActiveChat} activeChat={activeChat}/>
             </div>
             <div className={classes.right}>
                 <div className={`${classes.messagesHeader} ${classes.border}`}>

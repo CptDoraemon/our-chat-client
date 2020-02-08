@@ -17,7 +17,8 @@ export interface ChatListItemData {
 interface ChatListItemProps {
     data: ChatListItemData,
     setActiveChat: Dispatch<SetStateAction<number>>,
-    index: number
+    index: number,
+    isActive: boolean
 }
 
 const useStyle = makeStyles({
@@ -27,6 +28,9 @@ const useStyle = makeStyles({
         borderBottom: 'solid 1px rgb(230, 230, 230)',
         borderRadius: 0,
     },
+    rootActive: {
+        backgroundColor: 'rgb(220, 220, 220)'
+    },
     wrapper: {
         width: '100%',
         height: '100%',
@@ -34,7 +38,7 @@ const useStyle = makeStyles({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'start',
-        fontSize: '1rem'
+        fontSize: '0.875rem'
     },
     left: {
         width: '80px',
@@ -76,10 +80,10 @@ const useStyle = makeStyles({
     }
 });
 
-const ChatListItem: React.FC<ChatListItemProps> = ({data, setActiveChat, index}) => {
+const ChatListItem: React.FC<ChatListItemProps> = ({data, setActiveChat, index, isActive}) => {
     const classes = useStyle();
     return (
-        <Card className={classes.root}>
+        <Card className={ isActive ? `${classes.root} ${classes.rootActive}` : classes.root}>
             <CardActionArea className={classes.wrapper} onClick={() => setActiveChat(index)}>
             <div className={classes.left + ' row-c-c'}>
                 <div className={classes.avatar}>
