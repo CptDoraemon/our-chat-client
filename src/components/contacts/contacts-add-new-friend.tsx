@@ -5,6 +5,7 @@ import ContactsListItemDividerAlphabetic from "./contacts-list-item-divider-alph
 import ContactsListItemGeneric from "./contacts-list-item-generic";
 import {Link} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
+import getUrl from "../../helpers/getUrl";
 
 const defaultInput = 'Search Email';
 
@@ -48,18 +49,52 @@ const useStyles = makeStyles({
     searchIcon: {
         width: '30px',
         height: '1.5rem'
+    },
+    errorMessage: {
+        width: '100%',
+        height: '1.5rem',
+        textAlign: 'center'
     }
 });
 
-interface ContactsAddNewFriendProps {
-    backToContacts: () => void
+enum SearchResultStatus {
+    'OK'='ok',
+    'NOT_FOUND'='notFound',
+    'INVALID_EMAIL'='invalidEmail',
+    'ERROR'='error'
 }
 
-const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = ({backToContacts}) => {
+interface SearchResultData {
+    name: string,
+    image: string,
+    uid: string
+}
+
+interface SearchResultOK {
+    status: SearchResultStatus.OK,
+    data: SearchResultData
+}
+
+interface SearchResultNotOK {
+    status: Exclude<SearchResultStatus, SearchResultStatus.OK>,
+}
+
+type SearchResult = SearchResultOK | SearchResultNotOK;
+
+interface ContactsAddNewFriendProps {
+    handleClickBackToContacts: () => void
+}
+
+const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = ({handleClickBackToContacts}) => {
     const classes = useStyles();
     const [searchInput, setSearchInput] = useState(defaultInput);
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchResult, setSearchResult] = useState<null | SearchResult>(null);
+    const shouldSearch = searchInput !== '' && searchInput !== defaultInput;
+    console.log(searchResult);
 
     const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (searchResult) setSearchResult(null);
         setSearchInput(e.currentTarget.value)
     };
 
@@ -71,13 +106,50 @@ const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = ({backToContac
         if (searchInput === '') setSearchInput(defaultInput)
     };
 
-    const isSearchCardVisible = searchInput !== '' && searchInput !== defaultInput;
+    const handleSearch = () => {
+        if (!shouldSearch || isSearching) return;
+        setIsSearching(true);
+        const url = getUrl(`search-user?email=${encodeURIComponent(searchInput)}`);
+        fetch(url)
+            .then((res) => res.json())
+            .then(json => {
+                setIsSearching(false);
+                switch(json.status) {
+                    case SearchResultStatus.NOT_FOUND:
+                        setSearchResult({
+                            status: SearchResultStatus.NOT_FOUND
+                        });
+                        break;
+                    case SearchResultStatus.INVALID_EMAIL:
+                        setSearchResult({
+                            status: SearchResultStatus.INVALID_EMAIL
+                        });
+                        break;
+                    case SearchResultStatus.ERROR:
+                        setSearchResult({
+                            status: SearchResultStatus.ERROR
+                        });
+                        break;
+                    case SearchResultStatus.OK:
+                        setSearchResult({
+                            status: SearchResultStatus.OK,
+                            data: {...json.data}
+                        });
+                        break;
+                    default:
+                        setSearchResult({
+                            status: SearchResultStatus.ERROR
+                        });
+                }
+            })
+    };
+
 
     return (
         <div className={classes.root}>
             <div className={classes.wrapper}>
                 <div className={classes.backLink}>
-                    <Link href="#" onClick={backToContacts}>
+                    <Link href="#" onClick={handleClickBackToContacts}>
                         {`< Back to Contacts`}
                     </Link>
                 </div>
@@ -88,14 +160,49 @@ const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = ({backToContac
                     <input type={'text'} value={searchInput} onChange={inputChangeHandler} onFocus={inputFocusHandler} onBlur={inputBlurHandler}/>
                 </div>
                 {
-                    isSearchCardVisible &&
-                    <ContactsListItemGeneric title={`Search: ${searchInput}`} color={'white'} backgroundColor={'green'} onClick={() => false}>
+                    shouldSearch &&
+                    <ContactsListItemGeneric title={`Search: ${searchInput}`} color={'white'} backgroundColor={'green'} onClick={handleSearch}>
                         <SearchIcon/>
                     </ContactsListItemGeneric>
+                }
+                {
+                    searchResult && searchResult.status !== SearchResultStatus.OK &&
+                        <div className={classes.errorMessage}>
+                            <ContactsAddNewFriendErrorMessage searchResult={searchResult}/>
+                        </div>
+                }
+                {
+                    searchResult && searchResult.status === SearchResultStatus.OK &&
+                        <ContactsListItem name={searchResult.data.name} image={searchResult.data.image} isActive={false} handleClickContact={() => false}/>
                 }
             </div>
         </div>
     )
+};
+
+interface ContactsAddNewFriendErrorMessageProps {
+    searchResult: SearchResult
+}
+
+const ContactsAddNewFriendErrorMessage: React.FC<ContactsAddNewFriendErrorMessageProps> = ({searchResult}) => {
+    switch (searchResult.status) {
+        case SearchResultStatus.INVALID_EMAIL:
+            return (
+                <>{'Invalid Email'}</>
+            );
+        case SearchResultStatus.NOT_FOUND:
+            return (
+                <>{'User not found'}</>
+            );
+        case SearchResultStatus.ERROR:
+            return (
+                <>{'Server error'}</>
+            );
+        default:
+            return (
+                <>{'Invalid Email'}</>
+            );
+    }
 };
 
 export default ContactsAddNewFriend

@@ -37,21 +37,20 @@ export interface ContactsListItemData {
     image: string
 }
 
-interface ContactsListProps {
-    data: ContactsListItemData,
+interface ContactsListItemProps extends ContactsListItemData{
     isActive: boolean,
-    setActive: () => void
+    handleClickContact: () => void
 }
 
-const ContactsListItem: React.FC<ContactsListProps> = ({ data, isActive, setActive }) => {
+const ContactsListItem: React.FC<ContactsListItemProps> = ({ name, image, isActive, handleClickContact }) => {
     const classes = useStyles();
 
     return (
         <Card className={classes.root} elevation={0} style={isActive ? {backgroundColor: 'rgb(220, 220, 220)'} : {}}>
-            <CardActionArea className={classes.actionArea} onClick={setActive}>
-                <Avatar variant="rounded" alt={data.name} src={data.image} className={classes.avatar}/>
+            <CardActionArea className={classes.actionArea} onClick={handleClickContact}>
+                <Avatar variant="rounded" alt={name} src={image} className={classes.avatar}/>
                 <div className={classes.nameArea}>
-                    { data.name }
+                    { name }
                 </div>
             </CardActionArea>
         </Card>

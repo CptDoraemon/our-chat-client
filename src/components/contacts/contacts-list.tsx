@@ -5,7 +5,7 @@ import ContactsListItemDividerAlphabetic from "./contacts-list-item-divider-alph
 import ContactsListItemGeneric from "./contacts-list-item-generic";
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 
-function assembleData(data: ContactsListItemData[], selectedContact: number, toggleContact: (value: number) => void) {
+function assembleData(data: ContactsListItemData[], selectedContact: number, handleClickContact: (value: number) => void) {
     let lastIndex = '';
     const components: React.ReactElement[] = [];
     data.forEach((item, i) => {
@@ -14,7 +14,7 @@ function assembleData(data: ContactsListItemData[], selectedContact: number, tog
             lastIndex = currentIndex;
             components.push(<ContactsListItemDividerAlphabetic title={currentIndex} key={`divider-${currentIndex}`}/>)
         }
-        components.push(<ContactsListItem data={item} key={i} isActive={selectedContact === i} setActive={() => toggleContact(i)}/>)
+        components.push(<ContactsListItem name={item.name} image={item.image} key={i} isActive={selectedContact === i} handleClickContact={() => handleClickContact(i)}/>)
     });
     return components
 }
@@ -38,21 +38,27 @@ const useStyles = makeStyles({
 interface ContactsListProps {
     data: ContactsListItemData[],
     selectedContact: number,
-    toggleContact: (value: number) => void,
-    addNewFriend: () => void
+    handleClickNewFriend: () => void,
+    handleClickContact: (value: number) => void
 }
 
-const ContactsList: React.FC<ContactsListProps> = ({data, selectedContact, toggleContact, addNewFriend }) => {
+const ContactsList: React.FC<ContactsListProps> = (
+    {
+        data,
+        selectedContact,
+        handleClickNewFriend,
+        handleClickContact
+    }) => {
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
             <div className={classes.wrapper}>
-                <ContactsListItemGeneric title={'New Friend'} color={'white'} backgroundColor={'orange'} onClick={addNewFriend}>
+                <ContactsListItemGeneric title={'New Friend'} color={'white'} backgroundColor={'orange'} onClick={handleClickNewFriend}>
                     <RecentActorsIcon/>
                 </ContactsListItemGeneric>
             {
-                assembleData(data, selectedContact, toggleContact)
+                assembleData(data, selectedContact, handleClickContact)
             }
             </div>
         </div>
