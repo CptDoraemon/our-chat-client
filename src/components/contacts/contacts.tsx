@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ContactsList from "./contacts-list";
 import ContactsAddNewFriend from "./contacts-add-new-friend";
-import {ContactsDetailFriend, ContactsDetailStranger} from "./contacts-detail";
+import ContactsDetail from "./contacts-detail";
 import {useParams} from "react-router-dom";
 
 const mockData = new Array(50);
@@ -27,8 +27,7 @@ export enum ContactsTabOne {
 }
 
 export enum ContactsTabTwo {
-    CONTACT_DETAIL_FRIEND='contact_detail_friend',
-    CONTACT_DETAIL_STRANGER='contact_detail_stranger'
+    CONTACT_DETAIL='contact_detail'
 }
 
 const useStyles = makeStyles({
@@ -103,11 +102,7 @@ const Contacts: React.FC = () => {
             </div>
             <div className={classes.right + ' row-c-c'}>
                 {
-                    uid === '' ?
-                        null :
-                        tabTwo === ContactsTabTwo.CONTACT_DETAIL_FRIEND ?
-                        <ContactsDetailFriend name={''} image={''}/> :
-                        <ContactsDetailStranger name={'123'} image={'#'}/>
+                    uid !== '' && <ContactsDetail uid={uid}/>
                 }
             </div>
         </div>

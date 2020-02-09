@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 import SearchIcon from '@material-ui/icons/Search';
 import getUrl from "../../helpers/getUrl";
 import {Tabs} from "../our-chat/our-chat";
-import {ContactsTabOne} from "./contacts";
+import {ContactsTabOne, ContactsTabTwo} from "./contacts";
 import firebase from 'firebase';
 import getIDToken from "../../helpers/getIDToken";
 
@@ -117,8 +117,12 @@ const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = () => {
 
         try {
             const idToken = await getIDToken();
-            const url = getUrl(`search-user?email=${encodeURIComponent(searchInput)}&token=${encodeURIComponent(idToken)}`);
-            const res = await fetch(url);
+            const url = getUrl(`search-user?email=${encodeURIComponent(searchInput)}`);
+            const res = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`
+                }
+            });
             const json = await res.json();
             setIsSearching(false);
             switch(json.status) {
@@ -161,6 +165,7 @@ const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = () => {
         }
     };
 
+    console.log(searchResult);
 
     return (
         <div className={classes.root}>
@@ -190,7 +195,9 @@ const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = () => {
                 }
                 {
                     searchResult && searchResult.status === SearchResultStatus.OK &&
-                        <ContactsListItem name={searchResult.data.name} image={searchResult.data.image} isActive={false} linkTo={''}/>
+                        <ContactsListItem name={searchResult.data.name} image={searchResult.data.image} isActive={false}
+                                          linkTo={`/${Tabs.CONTACTS}/${ContactsTabOne.NEW_FRIEND}/${ContactsTabTwo.CONTACT_DETAIL}/${searchResult.data.uid}`}
+                        />
                 }
             </div>
         </div>
