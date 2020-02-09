@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import {IUser} from "../../App";
@@ -8,6 +8,7 @@ import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
 import PersonIcon from '@material-ui/icons/Person';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import IconButton from "@material-ui/core/IconButton";
+import {Link, useParams} from "react-router-dom";
 import {Tabs} from "../our-chat/our-chat";
 
 const useStyle = makeStyles({
@@ -31,14 +32,17 @@ const useStyle = makeStyles({
     }
 });
 
+interface IParam {
+    tab: Tabs
+}
+
 interface SideBarProps {
     user: IUser,
-    tab: Tabs,
-    setTab: Dispatch<SetStateAction<Tabs>>
 }
 
 const SideBar: React.FC<SideBarProps> = (props) => {
     const classes = useStyle();
+    const tab = useParams<IParam>().tab;
 
     return (
         <div className={classes.root}>
@@ -46,14 +50,18 @@ const SideBar: React.FC<SideBarProps> = (props) => {
                 <Avatar alt={props.user.displayName || ''} src={props.user.photoURL || ''} variant="rounded"/>
             </div>
             <div className={classes.row}>
-                <IconButton aria-label={'Chat'} onClick={() => props.setTab(Tabs.CHAT)} color={'inherit'}>
-                    { props.tab === Tabs.CHAT ? <ChatBubbleIcon /> : <ChatBubbleOutlineIcon/> }
-                </IconButton>
+                <Link to={`/${Tabs.CHAT}`}>
+                    <IconButton aria-label={'Chat'} color={'inherit'}>
+                        { tab === Tabs.CHAT ? <ChatBubbleIcon /> : <ChatBubbleOutlineIcon/> }
+                    </IconButton>
+                </Link>
             </div>
             <div className={classes.row}>
-                <IconButton aria-label={'contacts'} onClick={() => props.setTab(Tabs.CONTACTS)} color={'inherit'}>
-                    { props.tab === Tabs.CONTACTS ? <PersonIcon /> : <PersonOutlineIcon/> }
-                </IconButton>
+                <Link to={`/${Tabs.CONTACTS}`}>
+                    <IconButton aria-label={'contacts'} color={'inherit'}>
+                        { tab === Tabs.CONTACTS ? <PersonIcon /> : <PersonOutlineIcon/> }
+                    </IconButton>
+                </Link>
             </div>
         </div>
     )

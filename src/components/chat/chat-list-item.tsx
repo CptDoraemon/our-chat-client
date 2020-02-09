@@ -1,24 +1,27 @@
 import React, {Dispatch, SetStateAction} from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {Avatar} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
+import {Link, useParams} from "react-router-dom";
+import {Tabs} from "../our-chat/our-chat";
 
 export interface ChatListItemData {
     userName: string,
     image: string,
     lastMessage: string,
     unreadMessages: number,
-    lastMessageDate: string
+    lastMessageDate: string,
+    uid: string
+}
+
+interface IParams {
+    uid?: string
 }
 
 interface ChatListItemProps {
     data: ChatListItemData,
-    setActiveChat: Dispatch<SetStateAction<number>>,
-    index: number,
-    isActive: boolean
 }
 
 const useStyle = makeStyles({
@@ -80,30 +83,35 @@ const useStyle = makeStyles({
     }
 });
 
-const ChatListItem: React.FC<ChatListItemProps> = ({data, setActiveChat, index, isActive}) => {
+const ChatListItem: React.FC<ChatListItemProps> = ({data}) => {
     const classes = useStyle();
+    const activeUid = useParams<IParams>().uid;
+    const isActive = activeUid === data.uid;
+
     return (
         <Card className={ isActive ? `${classes.root} ${classes.rootActive}` : classes.root}>
-            <CardActionArea className={classes.wrapper} onClick={() => setActiveChat(index)}>
-            <div className={classes.left + ' row-c-c'}>
-                <div className={classes.avatar}>
-                    <Avatar alt={data.userName || ''} src={data.image} variant="rounded"/>
-                    <div className={classes.notification}>
-                        { data.unreadMessages }
+            <Link to={`/${Tabs.CHAT}/${data.uid}`}>
+                <CardActionArea className={classes.wrapper}>
+                <div className={classes.left + ' row-c-c'}>
+                    <div className={classes.avatar}>
+                        <Avatar alt={data.userName || ''} src={data.image} variant="rounded"/>
+                        <div className={classes.notification}>
+                            { data.unreadMessages }
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className={classes.right + ' col-c-c'}>
-                <div className={classes.rightRow}>
-                    <Box fontWeight={700}>
-                        { data.userName }
-                    </Box>
+                <div className={classes.right + ' col-c-c'}>
+                    <div className={classes.rightRow}>
+                        <Box fontWeight={700}>
+                            { data.userName }
+                        </Box>
+                    </div>
+                    <div className={classes.rightRow + ' ' + classes.message}>
+                            { data.lastMessage }
+                    </div>
                 </div>
-                <div className={classes.rightRow + ' ' + classes.message}>
-                        { data.lastMessage }
-                </div>
-            </div>
-            </CardActionArea>
+                </CardActionArea>
+            </Link>
         </Card>
     )
 };

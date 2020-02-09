@@ -4,6 +4,11 @@ import ChatList from "./chat-list";
 import ChatMessages from "./chat-messages";
 import ChatInput from "./chat-input";
 import ChatMessagesHeader from "./chat-messages-header";
+import {useParams} from "react-router-dom";
+
+interface IParams {
+    uid?: string
+}
 
 const mockData = new Array(50);
 mockData.fill(    {
@@ -11,14 +16,16 @@ mockData.fill(    {
     image: 'https://lh3.googleusercontent.com/a-/AAuE7mC3eMfsUaN4ngbp2Zg2t9CjVeWgRAos_E54qcxQSQ',
     lastMessage: 'This is last message, long long long long long long long long long long.',
     unreadMessages: 5,
-    lastMessageDate: '02:12'
+    lastMessageDate: '02:12',
+    uid: '123'
 });
 mockData.unshift({
     userName: 'Tom',
     image: 'https://lh3.googleusercontent.com/a-/AAuE7mC3eMfsUaN4ngbp2Zg2t9CjVeWgRAos_E54qcxQSQ',
     lastMessage: 'hahaha',
     unreadMessages: 2,
-    lastMessageDate: '01:55'
+    lastMessageDate: '01:55',
+    uid: '123'
 });
 
 const useStyles = makeStyles({
@@ -56,19 +63,24 @@ const useStyles = makeStyles({
     }
 });
 
-const Chat: React.FC = () => {
+const Chat: React.FC = (props) => {
     const classes = useStyles();
-
-    const [activeChat, setActiveChat] = useState(0);
+    const uid = useParams<IParams>().uid;
+    let name = '';
+    mockData.forEach(data => {
+        if (data.uid === uid) {
+            name = data.userName
+        }
+    });
 
     return (
         <div className={classes.root}>
             <div className={`${classes.list} ${classes.border}`}>
-                <ChatList data={mockData} setActiveChat={setActiveChat} activeChat={activeChat}/>
+                <ChatList data={mockData}/>
             </div>
             <div className={classes.right}>
                 <div className={`${classes.messagesHeader} ${classes.border}`}>
-                    <ChatMessagesHeader name={mockData[activeChat].userName}/>
+                    <ChatMessagesHeader name={name}/>
                 </div>
                 <div className={`${classes.messages} ${classes.border}`}>
                     <ChatMessages/>

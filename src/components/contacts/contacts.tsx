@@ -3,6 +3,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import ContactsList from "./contacts-list";
 import ContactsAddNewFriend from "./contacts-add-new-friend";
 import {ContactsDetailFriend, ContactsDetailStranger} from "./contacts-detail";
+import {useParams} from "react-router-dom";
 
 const mockData = new Array(50);
 mockData.fill(    {
@@ -14,14 +15,20 @@ mockData.unshift({
     image: 'https://lh3.googleusercontent.com/a-/AAuE7mC3eMfsUaN4ngbp2Zg2t9CjVeWgRAos_E54qcxQSQ',
 });
 
-enum ContactsPageOne {
-    NEW_FRIEND='NEW_FRIEND',
-    CONTACTS='CONTACTS'
+interface IParams {
+    contactsTabOne?: ContactsTabOne,
+    contactsTabTwo?: ContactsTabTwo,
+    uid?: string
 }
 
-enum ContactsPageTwo {
-    CONTACT_DETAIL_FRIEND='CONTACT_DETAIL_FRIEND',
-    CONTACT_DETAIL_STRANGER='CONTACT_DETAIL_STRANGER'
+export enum ContactsTabOne {
+    NEW_FRIEND='new_friend',
+    FRIEND='friend'
+}
+
+export enum ContactsTabTwo {
+    CONTACT_DETAIL_FRIEND='contact_detail_friend',
+    CONTACT_DETAIL_STRANGER='contact_detail_stranger'
 }
 
 const useStyles = makeStyles({
@@ -53,49 +60,53 @@ const Contacts: React.FC = () => {
         return a.name.localeCompare(b.name)
     });
 
-    const [selectedContact, setSelectedContact] = useState(-1);
-    const [pageOne, setPageOne] = useState(ContactsPageOne.CONTACTS);
-    const [pageTwo, setPageTwo] = useState(ContactsPageTwo.CONTACT_DETAIL_FRIEND);
+    const params = useParams<IParams>();
+    const tabOne = params.contactsTabOne || ContactsTabOne.FRIEND;
+    const tabTwo = params.contactsTabTwo;
+    const uid = params.uid || '';
 
-    const setPageOneNewFriend = () => {
-        if (pageOne !== ContactsPageOne.NEW_FRIEND) setPageOne(ContactsPageOne.NEW_FRIEND)
-    };
-
-    const setPageOneContacts = () => {
-        if (pageOne !== ContactsPageOne.CONTACTS) setPageOne(ContactsPageOne.CONTACTS)
-    };
-
-    const handleClickContact = (value: number) => {
-        setSelectedContact(value)
-    };
-
-    const handleClickNewFriend = () => {
-        setPageOneNewFriend()
-    };
-
-    const handleClickBackToContacts = () => {
-        setPageOneContacts()
-    };
+    // const [selectedContact, setSelectedContact] = useState(-1);
+    // const [pageOne, setPageOne] = useState(ContactsPageOne.CONTACTS);
+    // const [pageTwo, setPageTwo] = useState(ContactsPageTwo.CONTACT_DETAIL_FRIEND);
+    //
+    // const setPageOneNewFriend = () => {
+    //     if (pageOne !== ContactsPageOne.NEW_FRIEND) setPageOne(ContactsPageOne.NEW_FRIEND)
+    // };
+    //
+    // const setPageOneContacts = () => {
+    //     if (pageOne !== ContactsPageOne.CONTACTS) setPageOne(ContactsPageOne.CONTACTS)
+    // };
+    //
+    // const handleClickContact = (value: number) => {
+    //     setSelectedContact(value)
+    // };
+    //
+    // const handleClickNewFriend = () => {
+    //     setPageOneNewFriend()
+    // };
+    //
+    // const handleClickBackToContacts = () => {
+    //     setPageOneContacts()
+    // };
 
     return (
         <div className={classes.root}>
             <div className={`${classes.list} ${classes.border}`}>
                 {
-                    pageOne === ContactsPageOne.CONTACTS ?
+                    tabOne === ContactsTabOne.FRIEND ?
                         <ContactsList
                             data={sortedData}
-                            selectedContact={selectedContact}
-                            handleClickContact={handleClickContact}
-                            handleClickNewFriend={handleClickNewFriend}/> :
-                        <ContactsAddNewFriend handleClickBackToContacts={handleClickBackToContacts}/>
+                            activeUid={uid}
+                        /> :
+                        <ContactsAddNewFriend />
                 }
             </div>
             <div className={classes.right + ' row-c-c'}>
                 {
-                    pageTwo === ContactsPageTwo.CONTACT_DETAIL_FRIEND ?
-                        selectedContact === -1 ?
-                            null :
-                        <ContactsDetailFriend name={sortedData[selectedContact].name} image={sortedData[selectedContact].image}/> :
+                    uid === '' ?
+                        null :
+                        tabTwo === ContactsTabTwo.CONTACT_DETAIL_FRIEND ?
+                        <ContactsDetailFriend name={''} image={''}/> :
                         <ContactsDetailStranger name={'123'} image={'#'}/>
                 }
             </div>

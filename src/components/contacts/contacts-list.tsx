@@ -4,8 +4,10 @@ import ContactsListItem, {ContactsListItemData} from "./contacts-list-item";
 import ContactsListItemDividerAlphabetic from "./contacts-list-item-divider-alphabetic";
 import ContactsListItemGeneric from "./contacts-list-item-generic";
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
+import {Tabs} from "../our-chat/our-chat";
+import {ContactsTabOne} from "./contacts";
 
-function assembleData(data: ContactsListItemData[], selectedContact: number, handleClickContact: (value: number) => void) {
+function assembleData(data: ContactsListItemData[], activeUid: string) {
     let lastIndex = '';
     const components: React.ReactElement[] = [];
     data.forEach((item, i) => {
@@ -14,7 +16,7 @@ function assembleData(data: ContactsListItemData[], selectedContact: number, han
             lastIndex = currentIndex;
             components.push(<ContactsListItemDividerAlphabetic title={currentIndex} key={`divider-${currentIndex}`}/>)
         }
-        components.push(<ContactsListItem name={item.name} image={item.image} key={i} isActive={selectedContact === i} handleClickContact={() => handleClickContact(i)}/>)
+        components.push(<ContactsListItem name={item.name} image={item.image} key={i} isActive={activeUid === item.uid} linkTo={`/${Tabs.CONTACTS}/${ContactsTabOne.FRIEND}/${item.uid}`}/>)
     });
     return components
 }
@@ -37,28 +39,24 @@ const useStyles = makeStyles({
 
 interface ContactsListProps {
     data: ContactsListItemData[],
-    selectedContact: number,
-    handleClickNewFriend: () => void,
-    handleClickContact: (value: number) => void
+    activeUid: string,
 }
 
 const ContactsList: React.FC<ContactsListProps> = (
     {
         data,
-        selectedContact,
-        handleClickNewFriend,
-        handleClickContact
+        activeUid
     }) => {
     const classes = useStyles();
 
     return (
         <div className={classes.root}>
             <div className={classes.wrapper}>
-                <ContactsListItemGeneric title={'New Friend'} color={'white'} backgroundColor={'orange'} onClick={handleClickNewFriend}>
+                <ContactsListItemGeneric title={'New Friend'} color={'white'} backgroundColor={'orange'} linkTo={`/${Tabs.CONTACTS}/${ContactsTabOne.NEW_FRIEND}`}>
                     <RecentActorsIcon/>
                 </ContactsListItemGeneric>
             {
-                assembleData(data, selectedContact, handleClickContact)
+                assembleData(data, activeUid)
             }
             </div>
         </div>

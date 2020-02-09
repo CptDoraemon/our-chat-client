@@ -3,9 +3,11 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import ContactsListItem, {ContactsListItemData} from "./contacts-list-item";
 import ContactsListItemDividerAlphabetic from "./contacts-list-item-divider-alphabetic";
 import ContactsListItemGeneric from "./contacts-list-item-generic";
-import {Link} from "@material-ui/core";
+import {Link} from "react-router-dom";
 import SearchIcon from '@material-ui/icons/Search';
 import getUrl from "../../helpers/getUrl";
+import {Tabs} from "../our-chat/our-chat";
+import {ContactsTabOne} from "./contacts";
 
 const defaultInput = 'Search Email';
 
@@ -82,16 +84,15 @@ interface SearchResultNotOK {
 type SearchResult = SearchResultOK | SearchResultNotOK;
 
 interface ContactsAddNewFriendProps {
-    handleClickBackToContacts: () => void
+
 }
 
-const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = ({handleClickBackToContacts}) => {
+const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = () => {
     const classes = useStyles();
     const [searchInput, setSearchInput] = useState(defaultInput);
     const [isSearching, setIsSearching] = useState(false);
     const [searchResult, setSearchResult] = useState<null | SearchResult>(null);
     const shouldSearch = searchInput !== '' && searchInput !== defaultInput;
-    console.log(searchResult);
 
     const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (searchResult) setSearchResult(null);
@@ -149,7 +150,7 @@ const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = ({handleClickB
         <div className={classes.root}>
             <div className={classes.wrapper}>
                 <div className={classes.backLink}>
-                    <Link href="#" onClick={handleClickBackToContacts}>
+                    <Link to={`/${Tabs.CONTACTS}/${ContactsTabOne.FRIEND}`}>
                         {`< Back to Contacts`}
                     </Link>
                 </div>
@@ -173,7 +174,7 @@ const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = ({handleClickB
                 }
                 {
                     searchResult && searchResult.status === SearchResultStatus.OK &&
-                        <ContactsListItem name={searchResult.data.name} image={searchResult.data.image} isActive={false} handleClickContact={() => false}/>
+                        <ContactsListItem name={searchResult.data.name} image={searchResult.data.image} isActive={false} linkTo={''}/>
                 }
             </div>
         </div>

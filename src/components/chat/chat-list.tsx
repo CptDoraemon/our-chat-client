@@ -20,11 +20,9 @@ const useStyle = makeStyles({
 
 interface ChatListProps {
     data: ChatListItemData[],
-    setActiveChat: Dispatch<SetStateAction<number>>,
-    activeChat: number
 }
 
-const ChatList: React.FC<ChatListProps> = ({data, setActiveChat, activeChat}) => {
+const ChatList: React.FC<ChatListProps> = ({data}) => {
     const classes = useStyle();
     return (
         <div className={classes.root}>
@@ -32,7 +30,7 @@ const ChatList: React.FC<ChatListProps> = ({data, setActiveChat, activeChat}) =>
                 <ChatListSearchBar/>
                 {
                     data.map((_, i) => {
-                        return <ChatListItem key={i} data={_} setActiveChat={setActiveChat} index={i} isActive={activeChat === i}/>
+                        return <ChatListItem key={i} data={_} />
                     })
                 }
             </div>

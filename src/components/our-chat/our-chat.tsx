@@ -6,10 +6,16 @@ import SideBar from "../side-bar/side-bar";
 import {IUser} from "../../App";
 import Chat from "../chat/chat";
 import Contacts from "../contacts/contacts";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect
+} from "react-router-dom";
 
 export enum Tabs {
-    CHAT = 'CHAT',
-    CONTACTS = 'CONTACTS'
+    CHAT = 'chat',
+    CONTACTS = 'contacts'
 }
 
 const useStyle = makeStyles({
@@ -38,19 +44,22 @@ interface OurChatProps {
 
 const OurChat: React.FC<OurChatProps> = ({user}) => {
     const classes = useStyle();
-    const [tab, setTab] = useState<Tabs>(Tabs.CHAT);
     return (
         <div className={classes.root}>
-            <div className={classes.sideBar}>
-                <SideBar user={user} tab={tab} setTab={setTab}/>
-            </div>
-            <div className={classes.main}>
-                {
-                    tab === Tabs.CHAT ?
-                        <Chat/> :
-                        <Contacts/>
-                }
-            </div>
+            <Router>
+                <Route exact path="/">
+                    <Redirect to={`/${Tabs.CHAT}`} />
+                </Route>
+                <div className={classes.sideBar}>
+                    <Route path={'/:tab'} render={() => <SideBar user={user}/>} />
+                </div>
+                <div className={classes.main}>
+                    <Switch>
+                        <Route path={`/${Tabs.CHAT}/:uid?`} component={Chat} />
+                        <Route path={`/${Tabs.CONTACTS}/:contactsTabOne?/:contactsTabTwo?/:uid?`} component={Contacts} />
+                    </Switch>
+                </div>
+            </Router>
         </div>
     )
 };
