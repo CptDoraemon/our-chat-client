@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ContactsListItem, {ContactsListItemData} from "./contacts-list-item";
-import ContactsListItemDividerAlphabetic from "./contacts-list-item-divider-alphabetic";
 import ContactsListItemGeneric from "./contacts-list-item-generic";
 import {Link} from "react-router-dom";
 import SearchIcon from '@material-ui/icons/Search';
 import getUrl from "../../helpers/getUrl";
 import {Tabs} from "../our-chat/our-chat";
 import {ContactsTabOne} from "./contacts";
+import firebase from 'firebase';
+import getIDToken from "../../helpers/getIDToken";
 
 const defaultInput = 'Search Email';
 
@@ -63,13 +64,15 @@ enum SearchResultStatus {
     'OK'='ok',
     'NOT_FOUND'='notFound',
     'INVALID_EMAIL'='invalidEmail',
+    'SEARCHED_SELF'='searchedSelf',
     'ERROR'='error'
 }
 
 interface SearchResultData {
     name: string,
     image: string,
-    uid: string
+    uid: string,
+    isFriend: boolean
 }
 
 interface SearchResultOK {
@@ -107,42 +110,55 @@ const ContactsAddNewFriend: React.FC<ContactsAddNewFriendProps> = () => {
         if (searchInput === '') setSearchInput(defaultInput)
     };
 
-    const handleSearch = () => {
+    const handleSearch = async() => {
         if (!shouldSearch || isSearching) return;
         setIsSearching(true);
-        const url = getUrl(`search-user?email=${encodeURIComponent(searchInput)}`);
-        fetch(url)
-            .then((res) => res.json())
-            .then(json => {
-                setIsSearching(false);
-                switch(json.status) {
-                    case SearchResultStatus.NOT_FOUND:
-                        setSearchResult({
-                            status: SearchResultStatus.NOT_FOUND
-                        });
-                        break;
-                    case SearchResultStatus.INVALID_EMAIL:
-                        setSearchResult({
-                            status: SearchResultStatus.INVALID_EMAIL
-                        });
-                        break;
-                    case SearchResultStatus.ERROR:
-                        setSearchResult({
-                            status: SearchResultStatus.ERROR
-                        });
-                        break;
-                    case SearchResultStatus.OK:
-                        setSearchResult({
-                            status: SearchResultStatus.OK,
-                            data: {...json.data}
-                        });
-                        break;
-                    default:
-                        setSearchResult({
-                            status: SearchResultStatus.ERROR
-                        });
-                }
-            })
+        setSearchResult(null);
+
+        try {
+            const idToken = await getIDToken();
+            const url = getUrl(`search-user?email=${encodeURIComponent(searchInput)}&token=${encodeURIComponent(idToken)}`);
+            const res = await fetch(url);
+            const json = await res.json();
+            setIsSearching(false);
+            switch(json.status) {
+                case SearchResultStatus.NOT_FOUND:
+                    setSearchResult({
+                        status: SearchResultStatus.NOT_FOUND
+                    });
+                    break;
+                case SearchResultStatus.INVALID_EMAIL:
+                    setSearchResult({
+                        status: SearchResultStatus.INVALID_EMAIL
+                    });
+                    break;
+                case SearchResultStatus.SEARCHED_SELF:
+                    setSearchResult({
+                        status: SearchResultStatus.SEARCHED_SELF
+                    });
+                    break;
+                case SearchResultStatus.ERROR:
+                    setSearchResult({
+                        status: SearchResultStatus.ERROR
+                    });
+                    break;
+                case SearchResultStatus.OK:
+                    setSearchResult({
+                        status: SearchResultStatus.OK,
+                        data: {...json.data}
+                    });
+                    break;
+                default:
+                    setSearchResult({
+                        status: SearchResultStatus.ERROR
+                    });
+            }
+        } catch (e) {
+            setIsSearching(false);
+            setSearchResult({
+                status: SearchResultStatus.ERROR
+            });
+        }
     };
 
 
@@ -194,6 +210,10 @@ const ContactsAddNewFriendErrorMessage: React.FC<ContactsAddNewFriendErrorMessag
         case SearchResultStatus.NOT_FOUND:
             return (
                 <>{'User not found'}</>
+            );
+        case SearchResultStatus.SEARCHED_SELF:
+            return (
+                <>{'You cannot add yourself as friend'}</>
             );
         case SearchResultStatus.ERROR:
             return (

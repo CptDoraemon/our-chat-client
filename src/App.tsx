@@ -37,6 +37,7 @@ const App = () => {
     useEffect(() => {
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
+                console.log(user);
                 const userInfo: IUser = {
                     displayName: user.displayName,
                     email: user.email,

@@ -22,7 +22,10 @@ const uiConfig = {
     signInSuccessUrl: '/chat',
     // We will display Google and Facebook as auth providers.
     signInOptions: [
-        firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        {
+            provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            requireDisplayName: true
+        },
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
     ]
 };
