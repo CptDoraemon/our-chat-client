@@ -2,12 +2,13 @@ import React from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {TextareaAutosize} from "@material-ui/core";
 import ChatInputToolbar from "./chat-input-toolbar";
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
 
 const useStyle = makeStyles({
     root: {
         width: '100%',
         height: '100%',
-        overflowY: 'scroll',
         position: 'relative',
         '& :focus': {
             outline: 'none'
@@ -42,13 +43,13 @@ const useStyle = makeStyles({
 const ChatInput: React.FC = () => {
     const classes = useStyle();
     return (
-        <div className={classes.root}>
+        <SimpleBar className={classes.root}>
             <div className={classes.toolbar}>
                 <ChatInputToolbar/>
             </div>
             <div className={classes.toolBarPlaceHolder}> </div>
             <TextareaAutosize aria-label="empty textarea" placeholder="" className={classes.textarea}/>
-        </div>
+        </SimpleBar>
     )
 };
 

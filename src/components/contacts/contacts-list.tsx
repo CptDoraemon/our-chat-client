@@ -6,6 +6,8 @@ import ContactsListItemGeneric from "./contacts-list-item-generic";
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import {Tabs} from "../our-chat/our-chat";
 import {ContactsTabOne} from "./contacts";
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
 
 function assembleData(data: ContactsListItemData[], activeUid: string) {
     let lastIndex = '';
@@ -26,7 +28,6 @@ const useStyles = makeStyles({
         width: '100%',
         height: '100%',
         backgroundColor: 'rgb(220, 220, 220)',
-        overflowY: 'scroll'
     },
     wrapper: {
         width: '100%',
@@ -50,7 +51,7 @@ const ContactsList: React.FC<ContactsListProps> = (
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
+        <SimpleBar className={classes.root}>
             <div className={classes.wrapper}>
                 <ContactsListItemGeneric title={'New Friend'} color={'white'} backgroundColor={'orange'} linkTo={`/${Tabs.CONTACTS}/${ContactsTabOne.NEW_FRIEND}`}>
                     <RecentActorsIcon/>
@@ -59,7 +60,7 @@ const ContactsList: React.FC<ContactsListProps> = (
                 assembleData(data, activeUid)
             }
             </div>
-        </div>
+        </SimpleBar>
     )
 };
 

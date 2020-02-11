@@ -1,6 +1,8 @@
 import React from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ChatMessageItem from "./chat-message-item";
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
 
 export interface Message {
     userImage: string,
@@ -29,7 +31,6 @@ const useStyle = makeStyles({
     root: {
         width: '100%',
         height: '100%',
-        overflowY: 'scroll'
     },
     wrapper: {
         width: '100%',
@@ -43,7 +44,7 @@ const useStyle = makeStyles({
 const ChatMessages: React.FC = () => {
     const classes = useStyle();
     return (
-        <div className={classes.root}>
+        <SimpleBar className={classes.root}>
             <div className={classes.wrapper}>
                 {
                     mockData.map((msg, i) => {
@@ -51,7 +52,7 @@ const ChatMessages: React.FC = () => {
                     })
                 }
             </div>
-        </div>
+        </SimpleBar>
     )
 };
 
