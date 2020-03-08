@@ -1,32 +1,17 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import ChatList from "./chat-list";
 import ChatMessages from "./chat-messages";
 import ChatInput from "./chat-input";
 import ChatMessagesHeader from "./chat-messages-header";
 import {useParams} from "react-router-dom";
+import getUrl from "../../helpers/getUrl";
+import getIDToken from "../../helpers/getIDToken";
+import {ChatListItemData} from "./chat-list-item";
 
 interface IParams {
     uid?: string
 }
-
-const mockData = new Array(50);
-mockData.fill(    {
-    userName: 'Xiaoxi Yu',
-    image: 'https://lh3.googleusercontent.com/a-/AAuE7mC3eMfsUaN4ngbp2Zg2t9CjVeWgRAos_E54qcxQSQ',
-    lastMessage: 'This is last message, long long long long long long long long long long.',
-    unreadMessages: 5,
-    lastMessageDate: '02:12',
-    uid: '123'
-});
-mockData.unshift({
-    userName: 'Tom',
-    image: 'https://lh3.googleusercontent.com/a-/AAuE7mC3eMfsUaN4ngbp2Zg2t9CjVeWgRAos_E54qcxQSQ',
-    lastMessage: 'hahaha',
-    unreadMessages: 2,
-    lastMessageDate: '01:55',
-    uid: '123'
-});
 
 const useStyles = makeStyles({
     root: {
@@ -67,16 +52,27 @@ const Chat: React.FC = (props) => {
     const classes = useStyles();
     const uid = useParams<IParams>().uid;
     let name = '';
-    mockData.forEach(data => {
-        if (data.uid === uid) {
-            name = data.userName
-        }
-    });
+    const url = getUrl(`get-friends-list-chat`);
+
+    const [friendList, setFriendList] = useState<null | ChatListItemData[]>(null);
+    useEffect( () => {
+        (async () => {
+            const idToken = await getIDToken();
+            const res = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`
+                }
+            });
+            const json = await res.json();
+            setFriendList(json.data);
+            console.log(json);
+        })();
+    }, []);
 
     return (
         <div className={classes.root}>
             <div className={`${classes.list} ${classes.border}`}>
-                <ChatList data={mockData}/>
+                { friendList !== null && <ChatList data={friendList}/>}
             </div>
             <div className={classes.right}>
                 <div className={`${classes.messagesHeader} ${classes.border}`}>
